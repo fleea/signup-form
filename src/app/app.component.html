@@ -1,7 +1,6 @@
 <div class="content" role="main">
     <!-- SIGNUP FORM -->
     <div class="sign-up__container" fxLayout="row">
-        <div class="sign-up__description" fxFlex="33%"></div>
 
         <div class="sign-up__form" *ngIf="!userData">
             <form
@@ -72,7 +71,7 @@
                 </div>
 
                 <div class="row">
-                    <mat-form-field>
+                    <mat-form-field class="full-width">
                         <mat-label
                             >Email
                             <span
@@ -108,7 +107,7 @@
                     </mat-form-field>
                 </div>
                 <div class="row">
-                    <mat-form-field class="example-full-width">
+                    <mat-form-field class="full-width">
                         <mat-label
                             >Password
                             <span

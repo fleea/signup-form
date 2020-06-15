@@ -28,11 +28,12 @@ p {
 
 .content {
     display: flex;
-    margin: 82px auto 32px;
+    margin: 0 auto;
     padding: 0 16px;
     max-width: 960px;
     flex-direction: column;
     align-items: center;
+    padding-top: 82px;
 }
 
 svg.material-icons {
@@ -70,7 +71,9 @@ svg#clouds {
         padding: 0 8px 0 0;
     }
 }
-
+.full-width {
+    width: 100%;
+}
 ul.requirements {
     list-style: none;
     padding: 10px;
