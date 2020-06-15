@@ -77,6 +77,13 @@ ul.requirements {
     background-color: #ffe0b2;
     border-radius: 4px;
     li {
+        position: relative;
+        padding-left: 16px;
+        &:before {
+            content: '⇢';
+            position: absolute;
+            left: 0;
+        }
         &.pass {
             color: green;
             &:before {

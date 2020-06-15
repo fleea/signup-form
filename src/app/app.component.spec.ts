@@ -140,7 +140,7 @@ describe('SignUp Form', () => {
         email.setValue('thomas.shelby@gmail.com');
         expect(email.valid).toBeTruthy();
     });
-    // TODO: LEVELLING UP
+    // LEVEL UP HERE!!!
     xit('email should be valid with the new top level domain', () => {
         const email = component.signUpForm.controls['email'];
         email.setValue('thomas@shelby.travel');
@@ -184,32 +184,39 @@ describe('SignUp Form', () => {
         password.setValue('abcdefgh');
         expect(password.hasError('minlength')).toBeFalse();
     });
+    it('password should contain upper and lower case', () => {
+        const password = component.signUpForm.controls['password'];
+        password.setValue('abcdefg');
+        expect(password.hasError('pattern')).toBeTruthy();
+        password.setValue('1234AAA');
+        expect(password.hasError('pattern')).toBeTruthy();
+        password.setValue('Aa');
+        expect(password.hasError('pattern')).toBeFalsy();
+    });
     it('password should not contain first or last name', () => {
         const firstName = component.signUpForm.controls['firstName'];
         const lastName = component.signUpForm.controls['lastName'];
         const password = component.signUpForm.controls['password'];
         firstName.setValue('first');
-        lastName.setValue('lastName');
+        lastName.setValue('last');
 
         password.setValue('abcdefg');
         expect(password.hasError('includingName')).toBeFalsy();
 
         password.setValue('afirst');
-        expect(password.hasError('includingname')).toBeTruthy();
+        expect(password.hasError('includingName')).toBeTruthy();
 
         password.setValue('alastName');
-        expect(password.hasError('includingname')).toBeTruthy();
+        expect(password.hasError('includingName')).toBeTruthy();
     });
     it('strong password should be valid', () => {
         const firstName = component.signUpForm.controls['firstName'];
         const lastName = component.signUpForm.controls['lastName'];
         const password = component.signUpForm.controls['password'];
-        const repeatPassword = component.signUpForm.controls['repeatPassword'];
         firstName.setValue('first');
         lastName.setValue('lastName');
 
         password.setValue('ABcdeF1G');
-        repeatPassword.setValue('ABcdeF1G');
         expect(password.valid).toBeTruthy();
     });
 });

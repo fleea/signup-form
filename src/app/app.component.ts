@@ -18,7 +18,6 @@ import { UserData } from 'src/interfaces/user-data';
 export class AppComponent implements OnInit {
     title = 'signup-form';
     signUpForm: FormGroup;
-    passwordError: ValidationErrors;
     matcher = new ErrorStateMatcher();
     userData: UserData;
     constructor(
@@ -32,20 +31,11 @@ export class AppComponent implements OnInit {
                 lastName: ['', [Validators.required]],
                 email: ['', [Validators.required, EmailValidator]],
                 password: ['', PasswordValidator],
-                repeatPassword: ['', PasswordValidator],
             },
             {
-                validator: [
-                    EquivalentPasswordMatchingValidator,
-                    NotIncludesNameValidator,
-                ],
+                validator: [NotIncludesNameValidator],
             }
         );
-
-        this.signUpForm.get('password').statusChanges.subscribe((val) => {
-            this.passwordError = this.signUpForm.get('password').errors;
-            console.log(this.passwordError);
-        });
     }
 
     // PASSWORD INDICATION
@@ -73,20 +63,10 @@ export class AppComponent implements OnInit {
         pass: this.isPassIncludingName(password),
         fail: this.isFailIncludingName(password),
     });
-    isPassNotEquivalent = (password: AbstractControl) =>
-        !password.hasError('required') && !password.hasError('notEquivalent');
-    isFailNotEquivalent = (password: AbstractControl) =>
-        !password.hasError('required') && !!password.hasError('notEquivalent');
-    passNotEquivalentClass = (password: AbstractControl) => ({
-        pass: this.isPassNotEquivalent(password),
-        fail: this.isFailNotEquivalent(password),
-    });
     onSubmit = () => {
-        console.log(this.signUpForm.valid, this.signUpForm);
         this.appService
             .registerUser(this.signUpForm.value)
             .subscribe((val: UserData) => {
-                console.log(this.signUpForm.value);
                 // The API doesn't return anything, just assume that our data has been saved here.
                 this.userData = this.signUpForm.value;
             });
@@ -103,28 +83,6 @@ const PasswordValidator = [
 const EmailValidator = Validators.pattern(
     '[A-Za-z0-9._%-]+@[A-Za-z0-9._%-]+\\.[a-z]{2,3}'
 );
-/**
- * @param control value of new typed password
- * This is run everytime the password input changed
- * We could use manual validator (listening to value changes and validating it manually), but Abstract Control gives more sophisticated solution.
- * It's important to use Control Group generic validation since we need to access several values when deciding password is valid or not
- */
-const EquivalentPasswordMatchingValidator: ValidatorFn = (
-    fg: FormGroup
-): ValidationErrors | null => {
-    const { password, repeatPassword } = fg.value;
-    if (password !== repeatPassword) {
-        fg.controls['password'].setErrors({
-            ...fg.controls['password'].errors,
-            notEquivalent: true,
-        });
-        fg.controls['repeatPassword'].setErrors({
-            ...fg.controls['repeatPassword'].errors,
-            notEquivalent: true,
-        });
-    }
-    return null;
-};
 
 /**
  * Should be a minimum of eight characters,

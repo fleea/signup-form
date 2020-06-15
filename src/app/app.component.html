@@ -109,7 +109,8 @@
                 </div>
                 <div class="row">
                     <mat-form-field class="example-full-width">
-                        <mat-label>Password
+                        <mat-label
+                            >Password
                             <span
                                 class="error"
                                 *ngIf="!signUpForm.get('password').valid"
@@ -118,7 +119,9 @@
                             <span
                                 class="pass"
                                 *ngIf="signUpForm.get('password').valid"
-                                >✓</span></mat-label>
+                                >✓</span
+                            ></mat-label
+                        >
                         <input
                             matInput
                             formControlName="password"
@@ -129,33 +132,6 @@
                         <mat-error
                             *ngIf="
                                 signUpForm.get('password').hasError('required')
-                            "
-                        >
-                            <strong>required</strong>
-                        </mat-error>
-                    </mat-form-field>
-                    <mat-form-field class="example-full-width">
-                        <mat-label>Repeat Password
-                            <span
-                                class="error"
-                                *ngIf="!signUpForm.get('repeatPassword').valid"
-                                >*</span
-                            >
-                            <span
-                                class="pass"
-                                *ngIf="signUpForm.get('repeatPassword').valid"
-                                >✓</span></mat-label>
-                        <input
-                            matInput
-                            formControlName="repeatPassword"
-                            [errorStateMatcher]="matcher"
-                            type="password"
-                        />
-                        <mat-error
-                            *ngIf="
-                                signUpForm
-                                    .get('repeatPassword')
-                                    .hasError('required')
                             "
                         >
                             <strong>required</strong>
@@ -185,15 +161,13 @@
                     >
                         Should not contain user’s first or last name.
                     </li>
-                    <li
-                        [ngClass]="
-                            passNotEquivalentClass(signUpForm.get('password'))
-                        "
-                    >
-                        Should be exactly matched
-                    </li>
                 </ul>
-                <button mat-flat-button color="primary" type="submit" [disabled]="!signUpForm.valid">
+                <button
+                    mat-flat-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="!signUpForm.valid"
+                >
                     Sign in
                 </button>
             </form>
