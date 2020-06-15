@@ -3,7 +3,7 @@
     <div class="sign-up__container" fxLayout="row">
         <div class="sign-up__description" fxFlex="33%"></div>
 
-        <div class="sign-up__form">
+        <div class="sign-up__form" *ngIf="!userData">
             <form
                 [formGroup]="signUpForm"
                 (ngSubmit)="onSubmit()"
@@ -109,12 +109,21 @@
                 </div>
                 <div class="row">
                     <mat-form-field class="example-full-width">
-                        <mat-label>Password *</mat-label>
+                        <mat-label>Password
+                            <span
+                                class="error"
+                                *ngIf="!signUpForm.get('password').valid"
+                                >*</span
+                            >
+                            <span
+                                class="pass"
+                                *ngIf="signUpForm.get('password').valid"
+                                >✓</span></mat-label>
                         <input
                             matInput
                             formControlName="password"
                             [errorStateMatcher]="matcher"
-                            placeholder="Password"
+                            type="password"
                         />
                         <mat-hint></mat-hint>
                         <mat-error
@@ -126,11 +135,21 @@
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field class="example-full-width">
+                        <mat-label>Repeat Password
+                            <span
+                                class="error"
+                                *ngIf="!signUpForm.get('repeatPassword').valid"
+                                >*</span
+                            >
+                            <span
+                                class="pass"
+                                *ngIf="signUpForm.get('repeatPassword').valid"
+                                >✓</span></mat-label>
                         <input
                             matInput
                             formControlName="repeatPassword"
                             [errorStateMatcher]="matcher"
-                            placeholder="Repeat Password"
+                            type="password"
                         />
                         <mat-error
                             *ngIf="
@@ -144,25 +163,52 @@
                     </mat-form-field>
                 </div>
 
-                <ul className="password-error">
-                    <li>
+                <ul class="requirements">
+                    <li
+                        [ngClass]="
+                            passMinLengthClass(signUpForm.get('password'))
+                        "
+                    >
                         Should be a minimum of eight characters
                     </li>
-                    <li>
+                    <li
+                        [ngClass]="
+                            passUpperLowerClass(signUpForm.get('password'))
+                        "
+                    >
                         Should contain lower and uppercase letters
                     </li>
-                    <li>
+                    <li
+                        [ngClass]="
+                            passIncludingNameClass(signUpForm.get('password'))
+                        "
+                    >
                         Should not contain user’s first or last name.
                     </li>
-                    <li>
+                    <li
+                        [ngClass]="
+                            passNotEquivalentClass(signUpForm.get('password'))
+                        "
+                    >
                         Should be exactly matched
                     </li>
                 </ul>
-
-                <button mat-flat-button color="primary" type="submit">
+                <button mat-flat-button color="primary" type="submit" [disabled]="!signUpForm.valid">
                     Sign in
                 </button>
             </form>
+        </div>
+
+        <div class="sign-up__form" *ngIf="userData">
+            <p>
+                Dear
+                <strong>{{ userData.firstName }} {{ userData.lastName }}</strong
+                >,
+            </p>
+            <p>
+                Your registration has been submitted.<br />A confirmation email
+                has been sent to <strong>{{ userData.email }}</strong>
+            </p>
         </div>
     </div>
 

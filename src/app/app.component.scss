@@ -70,3 +70,24 @@ svg#clouds {
         padding: 0 8px 0 0;
     }
 }
+
+ul.requirements {
+    list-style: none;
+    padding: 10px;
+    background-color: #ffe0b2;
+    border-radius: 4px;
+    li {
+        &.pass {
+            color: green;
+            &:before {
+                content: '✓';
+            }
+        }
+        &.fail {
+            color: red;
+            &:before {
+                content: '✗';
+            }
+        }
+    }
+}

@@ -189,12 +189,27 @@ describe('SignUp Form', () => {
         const lastName = component.signUpForm.controls['lastName'];
         const password = component.signUpForm.controls['password'];
         firstName.setValue('first');
-        firstName.setValue('lastName');
+        lastName.setValue('lastName');
 
         password.setValue('abcdefg');
         expect(password.hasError('includingName')).toBeFalsy();
 
         password.setValue('afirst');
         expect(password.hasError('includingname')).toBeTruthy();
+
+        password.setValue('alastName');
+        expect(password.hasError('includingname')).toBeTruthy();
+    });
+    it('strong password should be valid', () => {
+        const firstName = component.signUpForm.controls['firstName'];
+        const lastName = component.signUpForm.controls['lastName'];
+        const password = component.signUpForm.controls['password'];
+        const repeatPassword = component.signUpForm.controls['repeatPassword'];
+        firstName.setValue('first');
+        lastName.setValue('lastName');
+
+        password.setValue('ABcdeF1G');
+        repeatPassword.setValue('ABcdeF1G');
+        expect(password.valid).toBeTruthy();
     });
 });

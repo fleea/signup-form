@@ -5,9 +5,11 @@ import {
     FormGroup,
     ValidationErrors,
     ValidatorFn,
+    AbstractControl,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { AppService } from './app.service';
+import { UserData } from 'src/interfaces/user-data';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -18,6 +20,7 @@ export class AppComponent implements OnInit {
     signUpForm: FormGroup;
     passwordError: ValidationErrors;
     matcher = new ErrorStateMatcher();
+    userData: UserData;
     constructor(
         private formBuilder: FormBuilder,
         private appService: AppService
@@ -28,22 +31,8 @@ export class AppComponent implements OnInit {
                 firstName: ['', [Validators.required]],
                 lastName: ['', [Validators.required]],
                 email: ['', [Validators.required, EmailValidator]],
-                password: [
-                    '',
-                    [
-                        Validators.required,
-                        Validators.minLength(8),
-                        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])[a-zA-Zd]$'),
-                    ],
-                ],
-                repeatPassword: [
-                    '',
-                    [
-                        Validators.required,
-                        Validators.minLength(8),
-                        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])[a-zA-Zd]$'),
-                    ],
-                ],
+                password: ['', PasswordValidator],
+                repeatPassword: ['', PasswordValidator],
             },
             {
                 validator: [
@@ -55,15 +44,62 @@ export class AppComponent implements OnInit {
 
         this.signUpForm.get('password').statusChanges.subscribe((val) => {
             this.passwordError = this.signUpForm.get('password').errors;
+            console.log(this.passwordError);
         });
-        this.signUpForm.valueChanges.subscribe((val) => console.log(val));
     }
+
+    // PASSWORD INDICATION
+    isPassMinLength = (password: AbstractControl) =>
+        !password.hasError('required') && !password.hasError('minlength');
+    isFailMinLength = (password: AbstractControl) =>
+        !password.hasError('required') && !!password.hasError('minlength');
+    passMinLengthClass = (password: AbstractControl) => ({
+        pass: this.isPassMinLength(password),
+        fail: this.isFailMinLength(password),
+    });
+    isPassUpperLower = (password: AbstractControl) =>
+        !password.hasError('required') && !password.hasError('pattern');
+    isFailUpperLower = (password: AbstractControl) =>
+        !password.hasError('required') && !!password.hasError('pattern');
+    passUpperLowerClass = (password: AbstractControl) => ({
+        pass: this.isPassUpperLower(password),
+        fail: this.isFailUpperLower(password),
+    });
+    isPassIncludingName = (password: AbstractControl) =>
+        !password.hasError('required') && !password.hasError('includingName');
+    isFailIncludingName = (password: AbstractControl) =>
+        !password.hasError('required') && !!password.hasError('includingName');
+    passIncludingNameClass = (password: AbstractControl) => ({
+        pass: this.isPassIncludingName(password),
+        fail: this.isFailIncludingName(password),
+    });
+    isPassNotEquivalent = (password: AbstractControl) =>
+        !password.hasError('required') && !password.hasError('notEquivalent');
+    isFailNotEquivalent = (password: AbstractControl) =>
+        !password.hasError('required') && !!password.hasError('notEquivalent');
+    passNotEquivalentClass = (password: AbstractControl) => ({
+        pass: this.isPassNotEquivalent(password),
+        fail: this.isFailNotEquivalent(password),
+    });
     onSubmit = () => {
         console.log(this.signUpForm.valid, this.signUpForm);
-        // TODO: Call service here
+        this.appService
+            .registerUser(this.signUpForm.value)
+            .subscribe((val: UserData) => {
+                console.log(this.signUpForm.value);
+                // The API doesn't return anything, just assume that our data has been saved here.
+                this.userData = this.signUpForm.value;
+            });
     };
 }
-
+const PasswordUpperLowerValidator = Validators.pattern(
+    '^(?=.*?[a-z])(?=.*?[A-Z]).*$'
+);
+const PasswordValidator = [
+    Validators.required,
+    Validators.minLength(8),
+    PasswordUpperLowerValidator,
+];
 const EmailValidator = Validators.pattern(
     '[A-Za-z0-9._%-]+@[A-Za-z0-9._%-]+\\.[a-z]{2,3}'
 );
@@ -78,12 +114,12 @@ const EquivalentPasswordMatchingValidator: ValidatorFn = (
 ): ValidationErrors | null => {
     const { password, repeatPassword } = fg.value;
     if (password !== repeatPassword) {
-        fg.controls['repeatPassword'].setErrors({
-            ...fg.controls['repeatPassword'].errors,
-            notEquivalent: true,
-        });
         fg.controls['password'].setErrors({
             ...fg.controls['password'].errors,
+            notEquivalent: true,
+        });
+        fg.controls['repeatPassword'].setErrors({
+            ...fg.controls['repeatPassword'].errors,
             notEquivalent: true,
         });
     }
